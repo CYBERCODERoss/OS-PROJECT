@@ -6,6 +6,8 @@
 #include <unistd.h>
 #include <pthread.h>	
 #include <semaphore.h>
+#include <cstdint>
+
 using namespace std;
 
 string currentTurn[4] = {"Red", "Green", "Yellow", "Blue"};
