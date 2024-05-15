@@ -12,7 +12,7 @@
 
 using namespace std;
 
-// Global Variables
+// global variables
 string currentTurn[4] = {"Red", "Green", "Yellow", "Blue"};
 int currentTurnIndex = -1;
 bool newTurn = true;
@@ -25,12 +25,12 @@ int dice;
 int dice2 = 0;
 int dice3 = 0;
 
-void killToken(string, int);
+void killGoti(string, int);
 
 struct House
 {
 	string color;
-	int tokensRemaining; // Tokens which havent completed their run yet
+	int tokensRemaining; // gootiyan jo rehti hain
 	int endHousePosition[5][2];
 	int tokensStuck; // Those stuck inside house
 	Token *tokens;
@@ -48,22 +48,18 @@ struct House
 
 	void setColor(string c)
 	{
-		// Setting the color of the house
 		tokensRemaining = totalTokens;
 		tokensStuck = totalTokens;
 		tokens = new Token[totalTokens];
 		color = c;
 
-		// Setting the start house coordinates
 		if (color == "Green")
 		{
 			for (int i = 0; i < totalTokens; i++)
 			{
-				// Setting the position of the tokens
 				tokens[i].setPosition(0);
 			}
 
-			// Setting the start house coordinates
 			startHouseCoordinates[0][0] = 125; // first 0 = 0th piece, 2nd 0 = x coordinate
 			startHouseCoordinates[0][1] = 125; // 1 here = y coordinate
 
@@ -226,17 +222,13 @@ struct House
 		}
 	}
 
-	// Function to get the color of the house
 	string getColor()
 	{
-
 		return color;
 	}
 
-	// Function to move the token
-	void moveToken(int key)
+	void moveGoti(int key)
 	{
-		// If all the dice is 6 
 		if (dice == 6 && dice2 == 6 && dice3 == 6) // three times the player got 6
 		{
 			dice = 0;
@@ -246,16 +238,14 @@ struct House
 			return;
 		}
 
-		// If the dice is 6 and the token is not free
 		if (dice)
 		{
-			if (tokens[key].free == false && dice == 6 && tokens[key].ended == false)
+			if (tokens[key].free == false && dice == 6 && tokens[key].ended == false) // goti in home + 6 + not ended
 			{
 
 				tokensStuck--;
 				tokens[key].setFree(true);
 
-				// Setting the position of the token for houses and the x and y coordinates 
 				//0 for green house 13 for red house 26 for blue house 39 for yellow house
 				if (color == "Green")
 				{ // 50
@@ -284,14 +274,14 @@ struct House
 				dice = 0;
 			}
 
-			//if token is not free and not ended
-			else if (tokens[key].free && tokens[key].ended == false)
+
+			else if (tokens[key].free && tokens[key].ended == false) // goti can move
 			{
 
 				tokens[key].position += dice;
 				tokens[key].iterator += dice;
 
-				// If the token is inside the safe house
+				// goti inside the safe house
 				if (tokens[key].iterator > 50 && this->hitrate > 0)
 				{
 					tokens[key].insideSafeHouse = true;
@@ -304,7 +294,7 @@ struct House
 				}
 
 				// Call the function to Kill the token if possible
-				killToken(color, key);
+				killGoti(color, key);
 
 				// If the iterator is greater than 51 and the hitrate is greater than 0
 				if (tokens[key].iterator >= 51 && this->hitrate > 0)
@@ -403,7 +393,7 @@ struct House
 				}
 
 				// Call the function to kill the token if possible
-				killToken(color, key);
+				killGoti(color, key);
 
 				// If the iterator is greater than 51 and the hitrate is greater than 0
 				if (tokens[key].iterator >= 51 && this->hitrate > 0)
@@ -476,7 +466,7 @@ struct House
 				}
 
 				// Call the function to kill the token if possible
-				killToken(color, key);
+				killGoti(color, key);
 
 				// If the iterator is greater than 51 and the hitrate is greater than 0
 				if (tokens[key].iterator >= 51 && this->hitrate > 0)
@@ -899,13 +889,10 @@ void drawDice()
 // Function to roll the dice
 void rollDice()
 {
-	// Check if it is a new turn
 	if (newTurn)
 	{
-		// Generate a random number between 1 and 6 and assign it to the variable 'dice'
 		dice = GetRandomValue(1, 6);
 
-		// Set the 'newTurn' flag to false
 		newTurn = false;
 
 		// If 'dice' is equal to 6, generate a second random number between 1 and 6 and assign it to the variable 'dice2'
@@ -922,8 +909,7 @@ void rollDice()
 	}
 }
 
-// Function to kill the token
-void killToken(string color, int key)
+void killGoti(string color, int key)
 {
 	// Loop through all the houses
 	for (int i = 0; i < 4; i++)
@@ -988,24 +974,21 @@ void killToken(string color, int key)
 }
 
 
-//semaphores one for token and the other for dice
+// semaphores
 sem_t tokensem;
 sem_t dicesem;
 
-//Function for player
 void *player(void *args)
 {
 	int p_no = *(int *)args;
 	while (true)
 	{
-		//semaphore for dice
-		sem_wait(&dicesem);
+		sem_wait(&dicesem); // semapahore for dice
 		rollDice();
 
-		//semaphore for token
 		sem_post(&dicesem);
 		sleep(1);
-		sem_wait(&tokensem);
+		sem_wait(&tokensem); // semaphore for goti
 		currentTurnIndex = p_no;
 		int count = 0;
 		if (dice == 6 && dice2 == 6 && dice3 == 6)
@@ -1023,7 +1006,7 @@ void *player(void *args)
 			if (keypressed >= 49 && keypressed < 49 + totalTokens)
 			{
 
-				allHouses[p_no].moveToken(keypressed - 49);
+				allHouses[p_no].moveGoti(keypressed - 49);
 				keypressed = 0;
 				if (dice2)
 				{
@@ -1058,13 +1041,11 @@ void *masterthread(void *args)
 		pthread_create(&players[i], NULL, &player, p_no);
 	}
 
-	//detaching threads
 	for (int i = 0; i < 4; i++)
 	{
 		pthread_detach(players[i]);
 	}
 
-	//checking if the player is done with the game
 	int temp_position = 1;
 	int counter = 0;
 	while (true)
