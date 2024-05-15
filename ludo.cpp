@@ -1,17 +1,3 @@
-
-							/*  _     _    _ _____   ____     _____ _______       _____  
-							| |   | |  | |  __ \ / __ \   / ____|__   __|/\   |  __ \ 
-							| |   | |  | | |  | | |  | | | (___    | |  /  \  | |__) |
-							| |   | |  | | |  | | |  | |  \___ \   | | / /\ \ |  _  / 
-							| |___| |__| | |__| | |__| |  ____) |  | |/ ____ \| | \ \ 
-							|______\____/|_____/ \____/  |_____/   |_/_/    \_\_|  \_\
-																					
-																					*/
-
-									// SYED SAAD MOHSIN 'I22-1601'
-									// TALAT FAHEEM     'I22-1735'
-									//  MUHAMMAD USMAN  'I22-1689'
-									
 #include "raylib.h"
 #include <iostream>
 #include <math.h>
@@ -825,27 +811,7 @@ void drawDice()
 		DrawText("Current", 800, 40, 30, BLACK);    // Current Turn Text, X, Y, Font Size, Color
 		DrawText("Turn:", 820, 80, 30, BLACK);
 		string turn = currentTurn[currentTurnIndex];
-
-		if (turn == "Green")
-		{
-			DrawText(turn.c_str(), 820, 120, 30, GREEN);
-		}
-
-		else if (turn == "Red")
-		{
-			DrawText(turn.c_str(), 820, 120, 30, RED);
-		}
-
-		else if (turn == "Blue")
-		{
-			DrawText(turn.c_str(), 820, 120, 30, BLUE);
-		}
-
-		else if (turn == "Yellow")
-		{
-			DrawText(turn.c_str(), 820, 120, 30, YELLOW);
-		}
-
+		DrawText(turn.c_str(), 820, 120, 30, BLACK);
 
 		for (int i = 0, j = 160; i < 4; i++, j += 40)
 		{
@@ -875,7 +841,6 @@ void drawDice()
 	}
 }
 
-
 void rollDice()
 {
 	if (newTurn)
@@ -899,37 +864,31 @@ void rollDice()
 
 void killGoti(string color, int key)
 {
-	// Loop through all the houses
-	for (int i = 0; i < 4; i++)
+
+	for (int i = 0; i < 4; i++) // checking all houses
 	{
-		// If the color of the house is the same as the color of the token
-		if (color == allHouses[i].color)
+		if (color == allHouses[i].color) // if the color is same
 		{
-			// Loop through all the houses
 			for (int j = 0; j < 4; j++)
-			{
-				// If the house is the same as the house of the token
+			{ 
 				if (j == i)
 				{
-					continue;
+					continue; // same house then just ignore 
 				}
 
-				// Loop through all the tokens
-				for (int k = 0; k < totalTokens; k++)
+				for (int k = 0; k < totalTokens; k++) // going through all tokens
 				{
-					// If the token is inside the safe house
-					if (allHouses[i].tokens[k].insideSafeHouse == true)
+					if (allHouses[i].tokens[k].insideSafeHouse == true) // if token safe then ignore
 					{
 						continue;
 					}
 
-					// If the token is inside the safe house
 					if (allHouses[j].tokens[k].insideSafeHouse == true)
 					{
 						continue; // If killing gotti inside its own safe house, it can't kill
 					}
 
-					// If the token is inside the safe spot which are 0,8,13,21,26,34,39,47
+					// if gotti in safe spot which are 0,8,13,21,26,34,39,47
 					if (allHouses[i].tokens[key].position % 52 == 0 || allHouses[i].tokens[key].position % 52 == 8 ||
 						allHouses[i].tokens[key].position % 52 == 13 || allHouses[i].tokens[key].position % 52 == 21 ||
 						allHouses[i].tokens[key].position % 52 == 26 || allHouses[i].tokens[key].position % 52 == 34 ||
@@ -938,19 +897,15 @@ void killGoti(string color, int key)
 						continue;
 					}
 
-					//if the token of current house is at the same position as the token of the other house then it will be killed
-					if (allHouses[i].tokens[key].position % 52 == allHouses[j].tokens[k].position % 52)
+					if (allHouses[i].tokens[key].position % 52 == allHouses[j].tokens[k].position % 52) // same position difference houses
 					{
-						//reset the position, iterator and move that token back to its initial position
-						//set free flag to false, increment the hitrate of the current token which hitted the victim
-						//print the hit rate and color of the current hitting token
 						allHouses[j].tokens[k].position = -1;
 						allHouses[j].tokens[k].iterator = 0;
 						allHouses[j].tokens[k].xCoordinates = allHouses[j].startHouseCoordinates[k][0];
 						allHouses[j].tokens[k].yCoordinates = allHouses[j].startHouseCoordinates[k][1];
 						allHouses[j].tokens[k].free = false;
 						allHouses[j].tokensStuck++;
-						allHouses[i].hitrate++;
+						allHouses[i].hitrate++; // maar di gotti
 						cout << allHouses[i].color << ":" << allHouses[i].hitrate << endl;
 						break;
 					}
