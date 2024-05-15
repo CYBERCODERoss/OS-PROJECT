@@ -25,7 +25,7 @@ int dice;
 int dice2 = 0;
 int dice3 = 0;
 
-void killGoti(string, int);
+void killToken(string, int);
 
 struct House
 {
@@ -48,19 +48,22 @@ struct House
 
 	void setColor(string c)
 	{
-
+		// Setting the color of the house
 		tokensRemaining = totalTokens;
 		tokensStuck = totalTokens;
 		tokens = new Token[totalTokens];
 		color = c;
+
+		// Setting the start house coordinates
 		if (color == "Green")
 		{
 			for (int i = 0; i < totalTokens; i++)
 			{
-
+				// Setting the position of the tokens
 				tokens[i].setPosition(0);
 			}
 
+			// Setting the start house coordinates
 			startHouseCoordinates[0][0] = 125; // first 0 = 0th piece, 2nd 0 = x coordinate
 			startHouseCoordinates[0][1] = 125; // 1 here = y coordinate
 
@@ -73,6 +76,7 @@ struct House
 			startHouseCoordinates[3][0] = 225;
 			startHouseCoordinates[3][1] = 225;
 
+			// Setting the x and y coordinates of the tokens
 			tokens[0].xCoordinates = startHouseCoordinates[0][0];
 			tokens[0].yCoordinates = startHouseCoordinates[0][1];
 
@@ -222,31 +226,37 @@ struct House
 		}
 	}
 
+	// Function to get the color of the house
 	string getColor()
 	{
 
 		return color;
 	}
 
-	void moveGoti(int key)
+	// Function to move the token
+	void moveToken(int key)
 	{
-
+		// If all the dice is 6 
 		if (dice == 6 && dice2 == 6 && dice3 == 6) // three times the player got 6
 		{
-
 			dice = 0;
 			dice2 = 0;
 			dice3 = 0;
 			newTurn = true;
-			return; // not your baari now
-		} 
+			return;
+		}
+
+		// If the dice is 6 and the token is not free
 		if (dice)
 		{
 			if (tokens[key].free == false && dice == 6 && tokens[key].ended == false)
 			{
-
+				// If the token is not free and the dice is 6, then set the token free
 				tokensStuck--;
 				tokens[key].setFree(true);
+
+				// Setting the position of the token for houses and the x and y coordinates 
+				//0 for green house 13 for red house 26 for blue house 39 for yellow house
 				if (color == "Green")
 				{ // 50
 					tokens[key].position = 0;
@@ -273,31 +283,35 @@ struct House
 				}
 				dice = 0;
 			}
+
+			//if token is not free and not ended
 			else if (tokens[key].free && tokens[key].ended == false)
 			{
 
 				tokens[key].position += dice;
 				tokens[key].iterator += dice;
 
+				// If the token is inside the safe house
 				if (tokens[key].iterator > 50 && this->hitrate > 0)
 				{
-
 					tokens[key].insideSafeHouse = true;
 				}
+				// If the hitrate is 0 and the iterator is greater than 51
 				else if (this->hitrate == 0 && tokens[key].iterator > 51)
 				{
 
 					tokens[key].iterator = tokens[key].iterator % 52;
 				}
 
-				killGoti(color, key);
+				// Call the function to Kill the token if possible
+				killToken(color, key);
 
+				// If the iterator is greater than 51 and the hitrate is greater than 0
 				if (tokens[key].iterator >= 51 && this->hitrate > 0)
 				{
-
+					// If the iterator is 56 then the token has ended its run
 					if (tokens[key].iterator == 56)
 					{
-
 						tokens[key].free = false;
 						tokens[key].ended = true;
 						tokensRemaining--;
@@ -306,33 +320,39 @@ struct House
 					}
 					else if (tokens[key].iterator > 56)
 					{
-
-						// sus
+						// If the iterator is greater than 56 then decrement the iterator by the dice
 						tokens[key].iterator -= dice;
 					}
 					else
 					{
-
+						// Set the x and y coordinates of the token
 						tokens[key].xCoordinates = endHousePosition[tokens[key].iterator % 51][0] + 25;
 						tokens[key].yCoordinates = endHousePosition[tokens[key].iterator % 51][1] + 25;
 					}
 				}
+
+				// If the iterator is less than 51
 				else
 				{
-
+					// Set the x and y coordinates of the token
 					tokens[key].xCoordinates = absolutePosCoordinates[tokens[key].position % 52][0] + 25;
 					tokens[key].yCoordinates = absolutePosCoordinates[tokens[key].position % 52][1] + 25;
 				}
 				dice = 0;
 			}
 		}
+		// If the dice2 is not 0
 		else if (dice2)
 		{
+			// If the token is not free and the dice is 6
 			if (tokens[key].free == false && dice2 == 6 && tokens[key].ended == false)
 			{
-
+				// Set the token free if the token is not free and the dice is 6
 				tokensStuck--;
 				tokens[key].setFree(true);
+
+				// Setting the position of the token for houses and the x and y coordinates
+				//0 for green house 13 for red house 26 for blue house 39 for yellow house
 				if (color == "Green")
 				{ // 50
 					tokens[key].position = 0;
@@ -359,58 +379,73 @@ struct House
 				}
 				dice2 = 0;
 			}
+
+			//if token is not free and not ended 
 			else if (tokens[key].free && tokens[key].ended == false)
 			{
-
+				// Move the token by the dice
 				tokens[key].position += dice2;
 				tokens[key].iterator += dice2;
 
+				// If the iterator is greater than 50 and the hitrate is greater than 0
 				if (tokens[key].iterator > 50 && this->hitrate > 0)
 				{
-
+					// Set the token inside the safe house
 					tokens[key].insideSafeHouse = true;
 				}
+
+				//if hitrate is 0 and iterator is greater than 51
 				else if (this->hitrate == 0 && tokens[key].iterator > 51)
 				{
-
+					// Set the iterator to the remainder of the iterator divided by 52
 					tokens[key].iterator = tokens[key].iterator % 52;
 				}
 
-				killGoti(color, key);
+				// Call the function to kill the token if possible
+				killToken(color, key);
 
+				// If the iterator is greater than 51 and the hitrate is greater than 0
 				if (tokens[key].iterator >= 51 && this->hitrate > 0)
 				{
-
+					// If the iterator is 56 then the token has ended its run
 					if (tokens[key].iterator == 56)
 					{
-
+						// Set the token free and ended
 						tokens[key].ended = true;
 						tokensRemaining--;
 
+						// Set the x and y coordinates of the token to 3000
 						tokens[key].xCoordinates = 3000;
 						tokens[key].yCoordinates = 3000;
 					}
 
+					// If the iterator is greater than 56
 					else if (tokens[key].iterator > 56)
 					{
+						// Decrement the iterator by the dice
 						tokens[key].iterator -= dice2;
 					}
 
+					// If the iterator is less than 56 and greater than 51
 					else
 					{
 						tokens[key].xCoordinates = endHousePosition[tokens[key].iterator % 51][0] + 25;
 						tokens[key].yCoordinates = endHousePosition[tokens[key].iterator % 51][1] + 25;
 					}
 				}
+
+				// If the iterator is less than 51
 				else
 				{
-
+					// Set the x and y coordinates of the token
 					tokens[key].xCoordinates = absolutePosCoordinates[tokens[key].position % 52][0] + 25;
 					tokens[key].yCoordinates = absolutePosCoordinates[tokens[key].position % 52][1] + 25;
 				}
 				dice2 = 0;
 			}
 		}
+
+		// If the dice3 is not 0
 		else if (dice3)
 		{
 			if (dice3 == 6)
@@ -418,55 +453,67 @@ struct House
 				return;
 			}
 
+			// If the token is not free and the dice is 6
 			if (tokens[key].free && tokens[key].ended == false && tokens[key].ended == false)
 			{
-
+				// Set the token free if the token is not free and the dice is 6
 				tokens[key].position += dice3;
 				tokens[key].iterator += dice3;
 
+				// If the iterator is greater than 50 and the hitrate is greater than 0
 				if (tokens[key].iterator > 50 && this->hitrate > 0)
 				{
-
+					// Set the token inside the safe house
 					tokens[key].insideSafeHouse = true;
 				}
+
+				//if hitrate is 0 and iterator is greater than 51
 				else if (this->hitrate == 0 && tokens[key].iterator > 51)
 				{
-
+					// Set the iterator to the remainder of the iterator divided by 52
 					tokens[key].iterator = tokens[key].iterator % 52;
 				}
 
-				killGoti(color, key);
+				// Call the function to kill the token if possible
+				killToken(color, key);
 
+				// If the iterator is greater than 51 and the hitrate is greater than 0
 				if (tokens[key].iterator >= 51 && this->hitrate > 0)
 				{
-
+					// If the iterator is 56 then the token has ended its run
 					tokens[key].insideSafeHouse = true;
 
 					if (tokens[key].iterator == 56)
 					{
-
+						// Set the token free and ended
 						tokens[key].free = false;
 						tokens[key].ended = true;
 						tokensRemaining--;
-
+						// Set the x and y coordinates of the token to 3000
 						tokens[key].xCoordinates = 3000;
 						tokens[key].yCoordinates = 3000;
 					}
-
+					
+					// If the iterator is greater than 56
 					else if (tokens[key].iterator > 56)
 					{
+						// Decrement the iterator by the dice
 						tokens[key].iterator -= dice3;
 					}
-
+					
+					// If the iterator is less than 56 and greater than 51
 					else
 					{
+						// Set the x and y coordinates of the token
 						tokens[key].xCoordinates = endHousePosition[tokens[key].iterator % 51][0] + 25;
 						tokens[key].yCoordinates = endHousePosition[tokens[key].iterator % 51][1] + 25;
 					}
 				}
+
+				// If the iterator is less than 51
 				else
 				{
-
+					// Set the x and y coordinates of the token
 					tokens[key].xCoordinates = absolutePosCoordinates[tokens[key].position % 52][0] + 25;
 					tokens[key].yCoordinates = absolutePosCoordinates[tokens[key].position % 52][1] + 25;
 				}
@@ -476,6 +523,7 @@ struct House
 	}
 };
 
+// Array of all the houses
 House allHouses[4];
 
 void absolutePosition_init()
@@ -598,8 +646,10 @@ void absolutePosition_init()
 	}
 }
 
+// Function to draw the board
 void drawBoard()
 {
+
 	// Houses
 	DrawRectangle(25, 25, 300, 300, GREEN);
 	DrawRectangle(475, 25, 300, 300, RED);
@@ -640,34 +690,46 @@ void drawBoard()
 
 	// House Special Tiles
 	// Red House
+				//safe house
 	for (int i = 75; i < 325; i += 50)
 	{
 		DrawRectangle(375, i, 50, 50, RED);
 	}
+
+	//safe spot
 	DrawRectangle(325, 125, 50, 50, RED);
 	DrawRectangle(425, 75, 50, 50, RED);
 
 	// Blue House
+				//safe house
 	for (int i = 475; i < 725; i += 50)
 	{
 		DrawRectangle(i, 375, 50, 50, BLUE);
 	}
+
+	//safe spot
 	DrawRectangle(625, 325, 50, 50, BLUE);
 	DrawRectangle(675, 425, 50, 50, BLUE);
 
 	// Yellow House
+					//safe house
 	for (int i = 475; i < 725; i += 50)
 	{
 		DrawRectangle(375, i, 50, 50, YELLOW);
 	}
+
+	//safe spot
 	DrawRectangle(425, 625, 50, 50, YELLOW);
 	DrawRectangle(325, 675, 50, 50, YELLOW);
 
 	// Green House
+				//safe house
 	for (int i = 75; i < 300; i += 50)
 	{
 		DrawRectangle(i, 375, 50, 50, GREEN);
 	}
+
+	//safe spot
 	DrawRectangle(125, 425, 50, 50, GREEN);
 	DrawRectangle(75, 325, 50, 50, GREEN);
 
@@ -713,15 +775,14 @@ void drawBoard()
 	}
 }
 
+// Function to draw the pieces
 void drawPieces()
 {
 
 	int outline = 22;
 	int inner = 18;
-
-	// Green pieces
-
-	// TODO:
+	
+	// Draw the pieces in the house
 	DrawCircle(allHouses[1].tokens[0].xCoordinates, allHouses[1].tokens[0].yCoordinates, outline, RAYWHITE); // Background (White)
 	DrawCircle(allHouses[1].tokens[0].xCoordinates, allHouses[1].tokens[0].yCoordinates, inner, GREEN);		 // Actual Color
 	DrawText("1", allHouses[1].tokens[0].xCoordinates - 3, allHouses[1].tokens[0].yCoordinates - 8, 20, BLACK);
@@ -740,20 +801,20 @@ void drawPieces()
 
 	if (totalTokens > 1)
 	{
-		DrawCircle(allHouses[1].tokens[1].xCoordinates, allHouses[1].tokens[1].yCoordinates, outline, RAYWHITE);
-		DrawCircle(allHouses[1].tokens[1].xCoordinates, allHouses[1].tokens[1].yCoordinates, inner, GREEN);
+		DrawCircle(allHouses[1].tokens[1].xCoordinates, allHouses[1].tokens[1].yCoordinates, outline, RAYWHITE);    // Background (White)
+		DrawCircle(allHouses[1].tokens[1].xCoordinates, allHouses[1].tokens[1].yCoordinates, inner, GREEN);         // Actual Color
 		DrawText("2", allHouses[1].tokens[1].xCoordinates - 3, allHouses[1].tokens[1].yCoordinates - 8, 20, BLACK);
 
-		DrawCircle(allHouses[0].tokens[1].xCoordinates, allHouses[0].tokens[1].yCoordinates, outline, RAYWHITE);
-		DrawCircle(allHouses[0].tokens[1].xCoordinates, allHouses[0].tokens[1].yCoordinates, inner, RED);
+		DrawCircle(allHouses[0].tokens[1].xCoordinates, allHouses[0].tokens[1].yCoordinates, outline, RAYWHITE);   // Background (White)
+		DrawCircle(allHouses[0].tokens[1].xCoordinates, allHouses[0].tokens[1].yCoordinates, inner, RED);         // Actual Color
 		DrawText("2", allHouses[0].tokens[1].xCoordinates - 3, allHouses[0].tokens[1].yCoordinates - 8, 20, BLACK);
 
-		DrawCircle(allHouses[2].tokens[1].xCoordinates, allHouses[2].tokens[1].yCoordinates, outline, RAYWHITE);
-		DrawCircle(allHouses[2].tokens[1].xCoordinates, allHouses[2].tokens[1].yCoordinates, inner, YELLOW);
+		DrawCircle(allHouses[2].tokens[1].xCoordinates, allHouses[2].tokens[1].yCoordinates, outline, RAYWHITE);  // Background (White)
+		DrawCircle(allHouses[2].tokens[1].xCoordinates, allHouses[2].tokens[1].yCoordinates, inner, YELLOW);      // Actual Color
 		DrawText("2", allHouses[2].tokens[1].xCoordinates - 3, allHouses[2].tokens[1].yCoordinates - 8, 20, BLACK);
 
-		DrawCircle(allHouses[3].tokens[1].xCoordinates, allHouses[3].tokens[1].yCoordinates, outline, RAYWHITE);
-		DrawCircle(allHouses[3].tokens[1].xCoordinates, allHouses[3].tokens[1].yCoordinates, inner, BLUE);
+		DrawCircle(allHouses[3].tokens[1].xCoordinates, allHouses[3].tokens[1].yCoordinates, outline, RAYWHITE);   // Background (White)
+		DrawCircle(allHouses[3].tokens[1].xCoordinates, allHouses[3].tokens[1].yCoordinates, inner, BLUE);         // Actual Color
 		DrawText("2", allHouses[3].tokens[1].xCoordinates - 3, allHouses[3].tokens[1].yCoordinates - 8, 20, BLACK);
 	}
 
@@ -778,41 +839,42 @@ void drawPieces()
 
 	if (totalTokens > 3)
 	{
-		DrawCircle(allHouses[1].tokens[3].xCoordinates, allHouses[1].tokens[3].yCoordinates, outline, RAYWHITE);
-		DrawCircle(allHouses[1].tokens[3].xCoordinates, allHouses[1].tokens[3].yCoordinates, inner, GREEN);
+		DrawCircle(allHouses[1].tokens[3].xCoordinates, allHouses[1].tokens[3].yCoordinates, outline, RAYWHITE);   // Background (White)
+		DrawCircle(allHouses[1].tokens[3].xCoordinates, allHouses[1].tokens[3].yCoordinates, inner, GREEN);        // Actual Color
 		DrawText("4", allHouses[1].tokens[3].xCoordinates - 3, allHouses[1].tokens[3].yCoordinates - 8, 20, BLACK);
 
-		DrawCircle(allHouses[0].tokens[3].xCoordinates, allHouses[0].tokens[3].yCoordinates, outline, RAYWHITE);
-		DrawCircle(allHouses[0].tokens[3].xCoordinates, allHouses[0].tokens[3].yCoordinates, inner, RED);
+		DrawCircle(allHouses[0].tokens[3].xCoordinates, allHouses[0].tokens[3].yCoordinates, outline, RAYWHITE);   // Background (White)
+		DrawCircle(allHouses[0].tokens[3].xCoordinates, allHouses[0].tokens[3].yCoordinates, inner, RED);          // Actual Color
 		DrawText("4", allHouses[0].tokens[3].xCoordinates - 3, allHouses[0].tokens[3].yCoordinates - 8, 20, BLACK);
 
-		DrawCircle(allHouses[2].tokens[3].xCoordinates, allHouses[2].tokens[3].yCoordinates, outline, RAYWHITE);
-		DrawCircle(allHouses[2].tokens[3].xCoordinates, allHouses[2].tokens[3].yCoordinates, inner, YELLOW);
+		DrawCircle(allHouses[2].tokens[3].xCoordinates, allHouses[2].tokens[3].yCoordinates, outline, RAYWHITE);   // Background (White)
+		DrawCircle(allHouses[2].tokens[3].xCoordinates, allHouses[2].tokens[3].yCoordinates, inner, YELLOW);       // Actual Color
 		DrawText("4", allHouses[2].tokens[3].xCoordinates - 3, allHouses[2].tokens[3].yCoordinates - 8, 20, BLACK);
 
-		DrawCircle(allHouses[3].tokens[3].xCoordinates, allHouses[3].tokens[3].yCoordinates, outline, RAYWHITE);
-		DrawCircle(allHouses[3].tokens[3].xCoordinates, allHouses[3].tokens[3].yCoordinates, inner, BLUE);
+		DrawCircle(allHouses[3].tokens[3].xCoordinates, allHouses[3].tokens[3].yCoordinates, outline, RAYWHITE);    // Background (White)
+		DrawCircle(allHouses[3].tokens[3].xCoordinates, allHouses[3].tokens[3].yCoordinates, inner, BLUE);          // Actual Color
 		DrawText("4", allHouses[3].tokens[3].xCoordinates - 3, allHouses[3].tokens[3].yCoordinates - 8, 20, BLACK);
 	}
 }
 
+// Function to draw the dice
 void drawDice()
 {
 	if (currentTurnIndex != -1)
 	{
-
-		DrawText("Current", 800, 40, 30, BLACK);
+		DrawText("Current", 800, 40, 30, BLACK);    // Current Turn Text, X, Y, Font Size, Color
 		DrawText("Turn:", 820, 80, 30, BLACK);
 		string turn = currentTurn[currentTurnIndex];
 		DrawText(turn.c_str(), 820, 120, 30, BLACK);
 
-		for (int i = 0, j = 160; i < 4; i++, j += 40) // displaying bitrate of each player along with other details
+		for (int i = 0, j = 160; i < 4; i++, j += 40)
 		{
 			string n = names[i] + ": " + to_string(allHouses[i].hitrate);
 
 			DrawText(n.c_str(), 800, j, 30, BLACK);
 		}
 
+		// Draw the dice
 		if (dice2)
 		{
 			DrawRectangle(800, 460, 75, 75, LIGHTGRAY);
@@ -833,6 +895,7 @@ void drawDice()
 	}
 }
 
+// Function to roll the dice
 void rollDice()
 {
 	// Check if it is a new turn
@@ -858,47 +921,54 @@ void rollDice()
 	}
 }
 
-void killGoti(string color, int key)
+// Function to kill the token
+void killToken(string color, int key)
 {
+	// Loop through all the houses
 	for (int i = 0; i < 4; i++)
 	{
-
+		// If the color of the house is the same as the color of the token
 		if (color == allHouses[i].color)
 		{
-
+			// Loop through all the houses
 			for (int j = 0; j < 4; j++)
 			{
-
+				// If the house is the same as the house of the token
 				if (j == i)
 				{
 					continue;
 				}
-				// this needs to be changed sus
+
+				// Loop through all the tokens
 				for (int k = 0; k < totalTokens; k++)
 				{
-
+					// If the token is inside the safe house
 					if (allHouses[i].tokens[k].insideSafeHouse == true)
 					{
-
 						continue;
 					}
+
+					// If the token is inside the safe house
 					if (allHouses[j].tokens[k].insideSafeHouse == true)
 					{
-
 						continue; // If killing gotti inside its own safe house, it can't kill
-								  // (Cuz Positions updating regardless)
 					}
+
+					// If the token is inside the safe spot which are 0,8,13,21,26,34,39,47
 					if (allHouses[i].tokens[key].position % 52 == 0 || allHouses[i].tokens[key].position % 52 == 8 ||
 						allHouses[i].tokens[key].position % 52 == 13 || allHouses[i].tokens[key].position % 52 == 21 ||
 						allHouses[i].tokens[key].position % 52 == 26 || allHouses[i].tokens[key].position % 52 == 34 ||
 						allHouses[i].tokens[key].position % 52 == 39 || allHouses[i].tokens[key].position % 52 == 47)
 					{
-
 						continue;
 					}
+
+					//if the token of current house is at the same position as the token of the other house then it will be killed
 					if (allHouses[i].tokens[key].position % 52 == allHouses[j].tokens[k].position % 52)
 					{
-
+						//reset the position, iterator and move that token back to its initial position
+						//set free flag to false, increment the hitrate of the current token which hitted the victim
+						//print the hit rate and color of the current hitting token
 						allHouses[j].tokens[k].position = -1;
 						allHouses[j].tokens[k].iterator = 0;
 						allHouses[j].tokens[k].xCoordinates = allHouses[j].startHouseCoordinates[k][0];
@@ -916,17 +986,22 @@ void killGoti(string color, int key)
 	}
 }
 
+
+//semaphores one for token and the other for dice
 sem_t tokensem;
 sem_t dicesem;
 
+//Function for player
 void *player(void *args)
 {
 	int p_no = *(int *)args;
 	while (true)
 	{
-
+		//semaphore for dice
 		sem_wait(&dicesem);
 		rollDice();
+
+		//semaphore for token
 		sem_post(&dicesem);
 		sleep(1);
 		sem_wait(&tokensem);
@@ -936,8 +1011,10 @@ void *player(void *args)
 		{
 			count = 3;
 		}
+
 		while (count != 3)
 		{
+			// dont change it ffs
 			if (keypressed)
 			{
 				usleep(1000);
@@ -945,7 +1022,7 @@ void *player(void *args)
 			if (keypressed >= 49 && keypressed < 49 + totalTokens)
 			{
 
-				allHouses[p_no].moveGoti(keypressed - 49);
+				allHouses[p_no].moveToken(keypressed - 49);
 				keypressed = 0;
 				if (dice2)
 				{
@@ -968,8 +1045,10 @@ void *player(void *args)
 	pthread_exit(NULL);
 }
 
+//Function for master thread
 void *masterthread(void *args)
 {
+	//creating threads for players
 	pthread_t players[4];
 	for (int i = 0; i < 4; i++)
 	{
@@ -977,10 +1056,14 @@ void *masterthread(void *args)
 		p_no[0] = i;
 		pthread_create(&players[i], NULL, &player, p_no);
 	}
+
+	//detaching threads
 	for (int i = 0; i < 4; i++)
 	{
 		pthread_detach(players[i]);
 	}
+
+	//checking if the player is done with the game
 	int temp_position = 1;
 	int counter = 0;
 	while (true)
@@ -991,7 +1074,7 @@ void *masterthread(void *args)
 
 			if (allHouses[i].tokensRemaining == 0)
 			{
-
+				//setting the position of the player
 				allHouses[i].position = temp_position;
 				temp_position++;
 				player_done[i] = true;
@@ -1010,6 +1093,8 @@ void *masterthread(void *args)
 		// counting the number of players done with the game
 		for (int i = 0; i < 4; i++)
 		{
+
+			//if the player is done with the game
 			if (player_done[i])
 			{
 
@@ -1019,7 +1104,7 @@ void *masterthread(void *args)
 		// checking if any 3 players are done with the game
 		if (counter == 3)
 		{
-
+			//printing the position of the players
 			cout << "Exiting Master Thread" << endl;
 			for (int i = 0; i < 4; i++)
 			{
@@ -1040,6 +1125,7 @@ void *masterthread(void *args)
 int main()
 {
 
+	// Input the number of tokens
 	cout << "Enter number of tokens:";
 	cin >> totalTokens;
 	while (totalTokens < 1 || totalTokens > 4)
@@ -1060,17 +1146,26 @@ int main()
 	allHouses[2].setColor("Yellow");
 	allHouses[3].setColor("Blue");
 
+	// Initialize the window	
 	const int windowWidth = 1000;
 	const int windowHeight = 1000;
 
 	InitWindow(windowWidth, windowHeight, "OS Project");
 	SetTargetFPS(60);
-	sem_init(&dicesem, 0, 1);
-	sem_init(&tokensem, 0, 1);
+
+	// Initialize the semaphore
+	sem_init(&dicesem, 0, 1);  // 0 is for shared between threads and 1 is for the semaphore value 
+	sem_init(&tokensem, 0, 1); // 0 is for shared between threads and 1 is for the semaphore value
+	
+	// Creating the master thread
 	pthread_t master;
 	pthread_create(&master, NULL, &masterthread, NULL);
 	pthread_detach(master);
+
+	// Initialize the absolute position
 	absolutePosition_init();
+
+	//raylib loop
 	while (!WindowShouldClose())
 	{
 		BeginDrawing();
