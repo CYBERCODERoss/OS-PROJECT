@@ -847,15 +847,14 @@ void rollDice()
 	if (newTurn)
 	{
 		dice = GetRandomValue(1, 6);
-
 		newTurn = false;
 
-		// If 'dice' is equal to 6, generate a second random number between 1 and 6 and assign it to the variable 'dice2'
+		// if chakha then do another roll
 		if (dice == 6)
 		{
 			dice2 = GetRandomValue(1, 6);
 
-			// If 'dice2' is equal to 6, generate a third random number between 1 and 6 and assign it to the variable 'dice3'
+			// if another chakha then do another rol
 			if (dice2 == 6)
 			{
 				dice3 = GetRandomValue(1, 6);
@@ -984,7 +983,6 @@ void *player(void *args)
 	pthread_exit(NULL);
 }
 
-//Function for master thread
 void *masterthread(void *args)
 {
 	//creating threads for players
@@ -1011,7 +1009,7 @@ void *masterthread(void *args)
 
 			if (allHouses[i].tokensRemaining == 0)
 			{
-				//setting the position of the player
+				// setting the position of the player
 				allHouses[i].position = temp_position;
 				temp_position++;
 				player_done[i] = true;
@@ -1027,33 +1025,27 @@ void *masterthread(void *args)
 				rollDice();
 			}
 		}
-		// counting the number of players done with the game
-		for (int i = 0; i < 4; i++)
+		
+		for (int i = 0; i < 4; i++) // how many players done with the game
 		{
-
-			//if the player is done with the game
 			if (player_done[i])
 			{
-
 				counter++;
 			}
 		}
-		// checking if any 3 players are done with the game
+		// if 3 players are done 
 		if (counter == 3)
 		{
-			//printing the position of the players
 			cout << "Exiting Master Thread" << endl;
 			for (int i = 0; i < 4; i++)
 			{
-
-				cout << "Position of " << names[i] << " " << allHouses[i].position << endl;
+				cout << "Position of " << names[i] << " " << allHouses[i].position << endl; // printing position
 			}
 			exit(0);
 			pthread_exit(NULL);
 		}
 		else
 		{
-
 			counter = 0;
 		}
 	}
@@ -1061,8 +1053,6 @@ void *masterthread(void *args)
 
 int main()
 {
-
-	// Input the number of tokens
 	cout << "Enter number of tokens:";
 	cin >> totalTokens;
 	while (totalTokens < 1 || totalTokens > 4)
@@ -1078,21 +1068,23 @@ int main()
 	cin >> names[2];
 	cout << "Enter Blue's name: ";
 	cin >> names[3];
+
+	// initializating the hosues
 	allHouses[0].setColor("Red");
 	allHouses[1].setColor("Green");
 	allHouses[2].setColor("Yellow");
 	allHouses[3].setColor("Blue");
 
-	// Initialize the window	
+	// the rayliub windwo
 	const int windowWidth = 1000;
 	const int windowHeight = 1000;
 
 	InitWindow(windowWidth, windowHeight, "OS Project");
 	SetTargetFPS(60);
 
-	// Initialize the semaphore
-	sem_init(&dicesem, 0, 1);  // 0 is for shared between threads and 1 is for the semaphore value 
-	sem_init(&tokensem, 0, 1); // 0 is for shared between threads and 1 is for the semaphore value
+	// semaphore initiliazation
+	sem_init(&dicesem, 0, 1);  
+	sem_init(&tokensem, 0, 1); 
 	
 
 	pthread_t master;
