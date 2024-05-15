@@ -480,9 +480,6 @@ House allHouses[4];
 
 void absolutePosition_init()
 {
-
-	/////// Setting Absolute Position and Coordinates//////
-
 	// Absolute Pos 0 = Start of Green
 
 	// 0 - 5 of green path
@@ -1097,12 +1094,12 @@ int main()
 	sem_init(&dicesem, 0, 1);  // 0 is for shared between threads and 1 is for the semaphore value 
 	sem_init(&tokensem, 0, 1); // 0 is for shared between threads and 1 is for the semaphore value
 	
-	// Creating the master thread
+
 	pthread_t master;
 	pthread_create(&master, NULL, &masterthread, NULL);
 	pthread_detach(master);
 
-	// Initialize the absolute position
+	// initializing all of the paths
 	absolutePosition_init();
 
 	//raylib loop
