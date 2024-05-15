@@ -244,7 +244,6 @@ struct House
 		{
 			if (tokens[key].free == false && dice == 6 && tokens[key].ended == false)
 			{
-
 				tokensStuck--;
 				tokens[key].setFree(true);
 				if (color == "Green")
@@ -295,7 +294,7 @@ struct House
 				if (tokens[key].iterator >= 51 && this->hitrate > 0)
 				{
 
-					if (tokens[key].iterator == 56)
+					if (tokens[key].iterator == 56) // goti has made it
 					{
 
 						tokens[key].free = false;
@@ -304,10 +303,8 @@ struct House
 						tokens[key].xCoordinates = 3000;
 						tokens[key].yCoordinates = 3000;
 					}
-					else if (tokens[key].iterator > 56)
+					else if (tokens[key].iterator > 56) // move back the gooti cuz u didnt get the right number	
 					{
-
-						// sus
 						tokens[key].iterator -= dice;
 					}
 					else
