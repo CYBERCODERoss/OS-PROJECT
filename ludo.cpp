@@ -38,7 +38,7 @@ struct House
 	int hitrate;
 	int position;
 
-	House()
+	House() // constructor sceenezz
 	{
 		hitrate = 0;
 		tokensRemaining = totalTokens;
@@ -286,17 +286,17 @@ struct House
 				{
 					tokens[key].insideSafeHouse = true;
 				}
-				// If the hitrate is 0 and the iterator is greater than 51
+
+				// go back if no kill
 				else if (this->hitrate == 0 && tokens[key].iterator > 51)
 				{
 
 					tokens[key].iterator = tokens[key].iterator % 52;
 				}
 
-				// Call the function to Kill the token if possible
 				killGoti(color, key);
 
-				// If the iterator is greater than 51 and the hitrate is greater than 0
+				// gooti goes to house
 				if (tokens[key].iterator >= 51 && this->hitrate > 0)
 				{
 
@@ -310,40 +310,35 @@ struct House
 					}
 					else if (tokens[key].iterator > 56) // move back the gooti cuz u didnt get the right number	
 					{
-
-						// sus
 						tokens[key].iterator -= dice;
 					}
 					else
 					{
-						// Set the x and y coordinates of the token
+						// set the cords
 						tokens[key].xCoordinates = endHousePosition[tokens[key].iterator % 51][0] + 25;
 						tokens[key].yCoordinates = endHousePosition[tokens[key].iterator % 51][1] + 25;
 					}
 				}
 
-				// If the iterator is less than 51
+				// normal move the gooti 
 				else
 				{
-					// Set the x and y coordinates of the token
+					// set the cords
 					tokens[key].xCoordinates = absolutePosCoordinates[tokens[key].position % 52][0] + 25;
 					tokens[key].yCoordinates = absolutePosCoordinates[tokens[key].position % 52][1] + 25;
 				}
 				dice = 0;
 			}
 		}
-		// If the dice2 is not 0
+
+		// same thing what happened to dice
 		else if (dice2)
 		{
-			// If the token is not free and the dice is 6
 			if (tokens[key].free == false && dice2 == 6 && tokens[key].ended == false)
 			{
-				// Set the token free if the token is not free and the dice is 6
 				tokensStuck--;
 				tokens[key].setFree(true);
 
-				// Setting the position of the token for houses and the x and y coordinates
-				//0 for green house 13 for red house 26 for blue house 39 for yellow house
 				if (color == "Green")
 				{ // 50
 					tokens[key].position = 0;
@@ -370,54 +365,39 @@ struct House
 				}
 				dice2 = 0;
 			}
-
-			//if token is not free and not ended 
 			else if (tokens[key].free && tokens[key].ended == false)
 			{
-				// Move the token by the dice
 				tokens[key].position += dice2;
 				tokens[key].iterator += dice2;
 
-				// If the iterator is greater than 50 and the hitrate is greater than 0
 				if (tokens[key].iterator > 50 && this->hitrate > 0)
 				{
-					// Set the token inside the safe house
 					tokens[key].insideSafeHouse = true;
 				}
 
-				//if hitrate is 0 and iterator is greater than 51
 				else if (this->hitrate == 0 && tokens[key].iterator > 51)
 				{
-					// Set the iterator to the remainder of the iterator divided by 52
 					tokens[key].iterator = tokens[key].iterator % 52;
 				}
 
-				// Call the function to kill the token if possible
 				killGoti(color, key);
 
-				// If the iterator is greater than 51 and the hitrate is greater than 0
 				if (tokens[key].iterator >= 51 && this->hitrate > 0)
 				{
-					// If the iterator is 56 then the token has ended its run
 					if (tokens[key].iterator == 56)
 					{
-						// Set the token free and ended
 						tokens[key].ended = true;
 						tokensRemaining--;
 
-						// Set the x and y coordinates of the token to 3000
 						tokens[key].xCoordinates = 3000;
 						tokens[key].yCoordinates = 3000;
 					}
 
-					// If the iterator is greater than 56
 					else if (tokens[key].iterator > 56)
 					{
-						// Decrement the iterator by the dice
 						tokens[key].iterator -= dice2;
 					}
 
-					// If the iterator is less than 56 and greater than 51
 					else
 					{
 						tokens[key].xCoordinates = endHousePosition[tokens[key].iterator % 51][0] + 25;
@@ -425,10 +405,8 @@ struct House
 					}
 				}
 
-				// If the iterator is less than 51
 				else
 				{
-					// Set the x and y coordinates of the token
 					tokens[key].xCoordinates = absolutePosCoordinates[tokens[key].position % 52][0] + 25;
 					tokens[key].yCoordinates = absolutePosCoordinates[tokens[key].position % 52][1] + 25;
 				}
@@ -436,7 +414,7 @@ struct House
 			}
 		}
 
-		// If the dice3 is not 0
+		// same thing as dice2
 		else if (dice3)
 		{
 			if (dice3 == 6)
@@ -444,67 +422,50 @@ struct House
 				return;
 			}
 
-			// If the token is not free and the dice is 6
 			if (tokens[key].free && tokens[key].ended == false && tokens[key].ended == false)
 			{
-				// Set the token free if the token is not free and the dice is 6
 				tokens[key].position += dice3;
 				tokens[key].iterator += dice3;
 
-				// If the iterator is greater than 50 and the hitrate is greater than 0
 				if (tokens[key].iterator > 50 && this->hitrate > 0)
 				{
-					// Set the token inside the safe house
 					tokens[key].insideSafeHouse = true;
 				}
 
-				//if hitrate is 0 and iterator is greater than 51
 				else if (this->hitrate == 0 && tokens[key].iterator > 51)
 				{
-					// Set the iterator to the remainder of the iterator divided by 52
 					tokens[key].iterator = tokens[key].iterator % 52;
 				}
 
-				// Call the function to kill the token if possible
 				killGoti(color, key);
 
-				// If the iterator is greater than 51 and the hitrate is greater than 0
 				if (tokens[key].iterator >= 51 && this->hitrate > 0)
 				{
-					// If the iterator is 56 then the token has ended its run
 					tokens[key].insideSafeHouse = true;
 
-					if (tokens[key].iterator == 56)
+					if (tokens[key].iterator == 56) // goti is done and dusted
 					{
-						// Set the token free and ended
 						tokens[key].free = false;
 						tokens[key].ended = true;
 						tokensRemaining--;
-						// Set the x and y coordinates of the token to 3000
 						tokens[key].xCoordinates = 3000;
 						tokens[key].yCoordinates = 3000;
 					}
 					
-					// If the iterator is greater than 56
 					else if (tokens[key].iterator > 56)
 					{
-						// Decrement the iterator by the dice
 						tokens[key].iterator -= dice3;
 					}
 					
-					// If the iterator is less than 56 and greater than 51
 					else
 					{
-						// Set the x and y coordinates of the token
 						tokens[key].xCoordinates = endHousePosition[tokens[key].iterator % 51][0] + 25;
 						tokens[key].yCoordinates = endHousePosition[tokens[key].iterator % 51][1] + 25;
 					}
 				}
 
-				// If the iterator is less than 51
 				else
 				{
-					// Set the x and y coordinates of the token
 					tokens[key].xCoordinates = absolutePosCoordinates[tokens[key].position % 52][0] + 25;
 					tokens[key].yCoordinates = absolutePosCoordinates[tokens[key].position % 52][1] + 25;
 				}
@@ -514,7 +475,7 @@ struct House
 	}
 };
 
-// Array of all the houses
+// all of the hosues global e
 House allHouses[4];
 
 void absolutePosition_init()
@@ -637,7 +598,6 @@ void absolutePosition_init()
 	}
 }
 
-// Function to draw the board
 void drawBoard()
 {
 
@@ -766,7 +726,6 @@ void drawBoard()
 	}
 }
 
-// Function to draw the pieces
 void drawPieces()
 {
 
@@ -848,7 +807,6 @@ void drawPieces()
 	}
 }
 
-// Function to draw the dice
 void drawDice()
 {
 	if (currentTurnIndex != -1)
@@ -886,7 +844,7 @@ void drawDice()
 	}
 }
 
-// Function to roll the dice
+
 void rollDice()
 {
 	if (newTurn)
