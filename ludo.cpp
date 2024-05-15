@@ -797,7 +797,6 @@ void drawPieces()
 
 void drawDice()
 {
-
 	if (currentTurnIndex != -1)
 	{
 
@@ -806,7 +805,7 @@ void drawDice()
 		string turn = currentTurn[currentTurnIndex];
 		DrawText(turn.c_str(), 820, 120, 30, BLACK);
 
-		for (int i = 0, j = 160; i < 4; i++, j += 40)
+		for (int i = 0, j = 160; i < 4; i++, j += 40) // displaying bitrate of each player along with other details
 		{
 			string n = names[i] + ": " + to_string(allHouses[i].hitrate);
 
