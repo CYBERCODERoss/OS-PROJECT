@@ -4,19 +4,20 @@
 #include <time.h>
 #include <string>
 #include <unistd.h>
-#include <pthread.h>	
+#include <pthread.h>
 #include <semaphore.h>
-#include <cstdint>
+#include "token.cpp"
 
 using namespace std;
 
+// Global Variables
 string currentTurn[4] = {"Red", "Green", "Yellow", "Blue"};
 int currentTurnIndex = -1;
 bool newTurn = true;
 int totalTokens = 0;
 int keypressed;
 int absolutePosCoordinates[52][2];
-bool player_done[4] = { false };
+bool player_done[4] = {false};
 string names[4];
 int dice;
 int dice2 = 0;
@@ -24,60 +25,8 @@ int dice3 = 0;
 
 void killToken(string, int);
 
-struct Token
-{
-
-	int position;
-	bool free;
-	bool stacked;
-	int iterator;
-	bool insideSafeHouse;
-	int xCoordinates, yCoordinates;
-	bool ended;
-
-	Token()
-	{
-		ended = false;
-		insideSafeHouse = false;
-		iterator = 0;
-		position = -1;
-		free = false;
-		stacked = false;
-	}
-
-	bool getFree()
-	{
-
-		return free;
-	}
-
-	bool getStacked()
-	{
-
-		return stacked;
-	}
-
-	int getPosition()
-	{
-
-		return position;
-	}
-
-	void setPosition(int x)
-	{
-
-		position = x;
-	}
-
-	void setFree(bool val)
-	{
-		free = val;
-	}
-};
-
 struct House
 {
-
 	string color;
 	int tokensRemaining; // Tokens which havent completed their run yet
 	int endHousePosition[5][2];
@@ -86,6 +35,7 @@ struct House
 	int startHouseCoordinates[4][2];
 	int hitrate;
 	int position;
+
 	House()
 	{
 		hitrate = 0;
@@ -121,21 +71,23 @@ struct House
 			startHouseCoordinates[3][0] = 225;
 			startHouseCoordinates[3][1] = 225;
 
-			
 			tokens[0].xCoordinates = startHouseCoordinates[0][0];
 			tokens[0].yCoordinates = startHouseCoordinates[0][1];
 
-			if (totalTokens > 1) {
+			if (totalTokens > 1)
+			{
 				tokens[1].xCoordinates = startHouseCoordinates[1][0];
 				tokens[1].yCoordinates = startHouseCoordinates[1][1];
 			}
 
-			if (totalTokens > 2) {
+			if (totalTokens > 2)
+			{
 				tokens[2].xCoordinates = startHouseCoordinates[2][0];
 				tokens[2].yCoordinates = startHouseCoordinates[2][1];
 			}
-			
-			if (totalTokens > 3) {
+
+			if (totalTokens > 3)
+			{
 				tokens[3].xCoordinates = startHouseCoordinates[3][0];
 				tokens[3].yCoordinates = startHouseCoordinates[3][1];
 			}
@@ -161,21 +113,23 @@ struct House
 			startHouseCoordinates[3][0] = 675;
 			startHouseCoordinates[3][1] = 225;
 
-			
 			tokens[0].xCoordinates = startHouseCoordinates[0][0];
 			tokens[0].yCoordinates = startHouseCoordinates[0][1];
 
-			if (totalTokens > 1) {
+			if (totalTokens > 1)
+			{
 				tokens[1].xCoordinates = startHouseCoordinates[1][0];
 				tokens[1].yCoordinates = startHouseCoordinates[1][1];
 			}
 
-			if (totalTokens > 2) {
+			if (totalTokens > 2)
+			{
 				tokens[2].xCoordinates = startHouseCoordinates[2][0];
 				tokens[2].yCoordinates = startHouseCoordinates[2][1];
 			}
-			
-			if (totalTokens > 3) {
+
+			if (totalTokens > 3)
+			{
 				tokens[3].xCoordinates = startHouseCoordinates[3][0];
 				tokens[3].yCoordinates = startHouseCoordinates[3][1];
 			}
@@ -204,21 +158,23 @@ struct House
 			tokens[0].xCoordinates = startHouseCoordinates[0][0];
 			tokens[0].yCoordinates = startHouseCoordinates[0][1];
 
-			if (totalTokens > 1) {
+			if (totalTokens > 1)
+			{
 				tokens[1].xCoordinates = startHouseCoordinates[1][0];
 				tokens[1].yCoordinates = startHouseCoordinates[1][1];
 			}
 
-			if (totalTokens > 2) {
+			if (totalTokens > 2)
+			{
 				tokens[2].xCoordinates = startHouseCoordinates[2][0];
 				tokens[2].yCoordinates = startHouseCoordinates[2][1];
 			}
-			
-			if (totalTokens > 3) {
+
+			if (totalTokens > 3)
+			{
 				tokens[3].xCoordinates = startHouseCoordinates[3][0];
 				tokens[3].yCoordinates = startHouseCoordinates[3][1];
 			}
-			
 		}
 		else if (color == "Yellow")
 		{
@@ -241,21 +197,23 @@ struct House
 			startHouseCoordinates[3][0] = 225;
 			startHouseCoordinates[3][1] = 675;
 
-			
 			tokens[0].xCoordinates = startHouseCoordinates[0][0];
 			tokens[0].yCoordinates = startHouseCoordinates[0][1];
 
-			if (totalTokens > 1) {
+			if (totalTokens > 1)
+			{
 				tokens[1].xCoordinates = startHouseCoordinates[1][0];
 				tokens[1].yCoordinates = startHouseCoordinates[1][1];
 			}
 
-			if (totalTokens > 2) {
+			if (totalTokens > 2)
+			{
 				tokens[2].xCoordinates = startHouseCoordinates[2][0];
 				tokens[2].yCoordinates = startHouseCoordinates[2][1];
 			}
-			
-			if (totalTokens > 3) {
+
+			if (totalTokens > 3)
+			{
 				tokens[3].xCoordinates = startHouseCoordinates[3][0];
 				tokens[3].yCoordinates = startHouseCoordinates[3][1];
 			}
@@ -268,9 +226,11 @@ struct House
 		return color;
 	}
 
-	void moveToken(int key) {
-		
-		if(dice==6 && dice2==6 && dice3==6) {
+	void moveToken(int key)
+	{
+
+		if (dice == 6 && dice2 == 6 && dice3 == 6) // three times the player got 6
+		{
 
 			dice = 0;
 			dice2 = 0;
@@ -278,52 +238,63 @@ struct House
 			newTurn = true;
 			return;
 		}
-		if (dice) {
-			if (tokens[key].free == false && dice==6 && tokens[key].ended == false) {
+		if (dice)
+		{
+			if (tokens[key].free == false && dice == 6 && tokens[key].ended == false)
+			{
 
 				tokensStuck--;
 				tokens[key].setFree(true);
-				if (color == "Green") { //50
+				if (color == "Green")
+				{ // 50
 					tokens[key].position = 0;
 					tokens[key].xCoordinates = absolutePosCoordinates[0][0] + 25;
 					tokens[key].yCoordinates = absolutePosCoordinates[0][1] + 25;
 				}
-				else if (color == "Red") { //11
+				else if (color == "Red")
+				{ // 11
 					tokens[key].position = 13;
 					tokens[key].xCoordinates = absolutePosCoordinates[13][0] + 25;
 					tokens[key].yCoordinates = absolutePosCoordinates[13][1] + 25;
-				} 
-				else if (color == "Blue") { //24
+				}
+				else if (color == "Blue")
+				{ // 24
 					tokens[key].position = 26;
 					tokens[key].xCoordinates = absolutePosCoordinates[26][0] + 25;
 					tokens[key].yCoordinates = absolutePosCoordinates[26][1] + 25;
 				}
-				else if (color == "Yellow") { //37
+				else if (color == "Yellow")
+				{ // 37
 					tokens[key].position = 39;
 					tokens[key].xCoordinates = absolutePosCoordinates[39][0] + 25;
 					tokens[key].yCoordinates = absolutePosCoordinates[39][1] + 25;
 				}
 				dice = 0;
 			}
-			else if(tokens[key].free && tokens[key].ended == false) {
+			else if (tokens[key].free && tokens[key].ended == false)
+			{
 
 				tokens[key].position += dice;
 				tokens[key].iterator += dice;
 
-				if (tokens[key].iterator > 50 && this->hitrate > 0) {
+				if (tokens[key].iterator > 50 && this->hitrate > 0)
+				{
 
 					tokens[key].insideSafeHouse = true;
 				}
-				else if(this->hitrate==0 && tokens[key].iterator > 51) {
+				else if (this->hitrate == 0 && tokens[key].iterator > 51)
+				{
 
 					tokens[key].iterator = tokens[key].iterator % 52;
 				}
 
 				killToken(color, key);
 
-				if(tokens[key].iterator >= 51 && this->hitrate > 0) {
-					
-					if (tokens[key].iterator == 56) {
+				if (tokens[key].iterator >= 51 && this->hitrate > 0)
+				{
+
+					if (tokens[key].iterator == 56)
+					{
 
 						tokens[key].free = false;
 						tokens[key].ended = true;
@@ -331,18 +302,21 @@ struct House
 						tokens[key].xCoordinates = 3000;
 						tokens[key].yCoordinates = 3000;
 					}
-					else if (tokens[key].iterator > 56) {
+					else if (tokens[key].iterator > 56)
+					{
 
-						//sus
+						// sus
 						tokens[key].iterator -= dice;
 					}
-					else {
+					else
+					{
 
 						tokens[key].xCoordinates = endHousePosition[tokens[key].iterator % 51][0] + 25;
 						tokens[key].yCoordinates = endHousePosition[tokens[key].iterator % 51][1] + 25;
-					}							
+					}
 				}
-				else {
+				else
+				{
 
 					tokens[key].xCoordinates = absolutePosCoordinates[tokens[key].position % 52][0] + 25;
 					tokens[key].yCoordinates = absolutePosCoordinates[tokens[key].position % 52][1] + 25;
@@ -350,52 +324,63 @@ struct House
 				dice = 0;
 			}
 		}
-		else if (dice2) {
-			if (tokens[key].free == false && dice2==6 && tokens[key].ended == false) {
+		else if (dice2)
+		{
+			if (tokens[key].free == false && dice2 == 6 && tokens[key].ended == false)
+			{
 
 				tokensStuck--;
 				tokens[key].setFree(true);
-				if (color == "Green") { //50
+				if (color == "Green")
+				{ // 50
 					tokens[key].position = 0;
 					tokens[key].xCoordinates = absolutePosCoordinates[0][0] + 25;
 					tokens[key].yCoordinates = absolutePosCoordinates[0][1] + 25;
 				}
-				else if (color == "Red") { //11
+				else if (color == "Red")
+				{ // 11
 					tokens[key].position = 13;
 					tokens[key].xCoordinates = absolutePosCoordinates[13][0] + 25;
 					tokens[key].yCoordinates = absolutePosCoordinates[13][1] + 25;
-				} 
-				else if (color == "Blue") { //24
+				}
+				else if (color == "Blue")
+				{ // 24
 					tokens[key].position = 26;
 					tokens[key].xCoordinates = absolutePosCoordinates[26][0] + 25;
 					tokens[key].yCoordinates = absolutePosCoordinates[26][1] + 25;
 				}
-				else if (color == "Yellow") { //37
+				else if (color == "Yellow")
+				{ // 37
 					tokens[key].position = 39;
 					tokens[key].xCoordinates = absolutePosCoordinates[39][0] + 25;
 					tokens[key].yCoordinates = absolutePosCoordinates[39][1] + 25;
 				}
 				dice2 = 0;
 			}
-			else if(tokens[key].free && tokens[key].ended == false) {
+			else if (tokens[key].free && tokens[key].ended == false)
+			{
 
 				tokens[key].position += dice2;
 				tokens[key].iterator += dice2;
 
-				if (tokens[key].iterator > 50 && this->hitrate > 0) {
+				if (tokens[key].iterator > 50 && this->hitrate > 0)
+				{
 
 					tokens[key].insideSafeHouse = true;
 				}
-				else if(this->hitrate==0 && tokens[key].iterator > 51) {
+				else if (this->hitrate == 0 && tokens[key].iterator > 51)
+				{
 
 					tokens[key].iterator = tokens[key].iterator % 52;
 				}
 
 				killToken(color, key);
 
-				if(tokens[key].iterator >= 51 && this->hitrate > 0) {
+				if (tokens[key].iterator >= 51 && this->hitrate > 0)
+				{
 
-					if (tokens[key].iterator == 56) {
+					if (tokens[key].iterator == 56)
+					{
 
 						tokens[key].ended = true;
 						tokensRemaining--;
@@ -404,17 +389,19 @@ struct House
 						tokens[key].yCoordinates = 3000;
 					}
 
-					else if (tokens[key].iterator > 56) {
+					else if (tokens[key].iterator > 56)
+					{
 						tokens[key].iterator -= dice2;
-
 					}
 
-					else {
+					else
+					{
 						tokens[key].xCoordinates = endHousePosition[tokens[key].iterator % 51][0] + 25;
 						tokens[key].yCoordinates = endHousePosition[tokens[key].iterator % 51][1] + 25;
 					}
 				}
-				else {
+				else
+				{
 
 					tokens[key].xCoordinates = absolutePosCoordinates[tokens[key].position % 52][0] + 25;
 					tokens[key].yCoordinates = absolutePosCoordinates[tokens[key].position % 52][1] + 25;
@@ -422,33 +409,39 @@ struct House
 				dice2 = 0;
 			}
 		}
-		else if (dice3) {
-			if (dice3 == 6) {
+		else if (dice3)
+		{
+			if (dice3 == 6)
+			{
 				return;
 			}
 
-		
-			if(tokens[key].free && tokens[key].ended == false && tokens[key].ended == false) {
+			if (tokens[key].free && tokens[key].ended == false && tokens[key].ended == false)
+			{
 
 				tokens[key].position += dice3;
 				tokens[key].iterator += dice3;
 
-				if (tokens[key].iterator > 50 && this->hitrate > 0) {
+				if (tokens[key].iterator > 50 && this->hitrate > 0)
+				{
 
 					tokens[key].insideSafeHouse = true;
 				}
-				else if(this->hitrate==0 && tokens[key].iterator > 51) {
+				else if (this->hitrate == 0 && tokens[key].iterator > 51)
+				{
 
 					tokens[key].iterator = tokens[key].iterator % 52;
 				}
 
 				killToken(color, key);
 
-				if(tokens[key].iterator >= 51 && this->hitrate > 0) {
+				if (tokens[key].iterator >= 51 && this->hitrate > 0)
+				{
 
 					tokens[key].insideSafeHouse = true;
 
-					if (tokens[key].iterator == 56) {
+					if (tokens[key].iterator == 56)
+					{
 
 						tokens[key].free = false;
 						tokens[key].ended = true;
@@ -458,16 +451,19 @@ struct House
 						tokens[key].yCoordinates = 3000;
 					}
 
-					else if (tokens[key].iterator > 56) {
+					else if (tokens[key].iterator > 56)
+					{
 						tokens[key].iterator -= dice3;
 					}
 
-					else {
+					else
+					{
 						tokens[key].xCoordinates = endHousePosition[tokens[key].iterator % 51][0] + 25;
 						tokens[key].yCoordinates = endHousePosition[tokens[key].iterator % 51][1] + 25;
 					}
 				}
-				else {
+				else
+				{
 
 					tokens[key].xCoordinates = absolutePosCoordinates[tokens[key].position % 52][0] + 25;
 					tokens[key].yCoordinates = absolutePosCoordinates[tokens[key].position % 52][1] + 25;
@@ -563,38 +559,38 @@ void absolutePosition_init()
 	absolutePosCoordinates[51][0] = 25;
 	absolutePosCoordinates[51][1] = 325;
 
-	//relative coordinates of green house
+	// relative coordinates of green house
 	for (int i = 0, j = 75; i < 5; i++, j += 50)
 	{
 
-		//x=75 constant height = 375
+		// x=75 constant height = 375
 		allHouses[1].endHousePosition[i][0] = j;
 		allHouses[1].endHousePosition[i][1] = 375;
 	}
 
-	//relative coordinates of red house
+	// relative coordinates of red house
 	for (int i = 0, j = 75; i < 5; i++, j += 50)
 	{
 
-		//constant width = 375 height = 75
+		// constant width = 375 height = 75
 		allHouses[0].endHousePosition[i][0] = 375;
 		allHouses[0].endHousePosition[i][1] = j;
 	}
 
-	//relative coordinates of blue house
+	// relative coordinates of blue house
 	for (int i = 0, j = 675; i < 5; i++, j -= 50)
 	{
 
-		//x = 675 constant height = 375
+		// x = 675 constant height = 375
 		allHouses[3].endHousePosition[i][0] = j;
 		allHouses[3].endHousePosition[i][1] = 375;
 	}
 
-	//relative coordinates of yellow house
+	// relative coordinates of yellow house
 	for (int i = 0, j = 675; i < 5; i++, j -= 50)
 	{
 
-		//constant width = 375 constant height = 375
+		// constant width = 375 constant height = 375
 		allHouses[2].endHousePosition[i][0] = 375;
 		allHouses[2].endHousePosition[i][1] = j;
 	}
@@ -724,7 +720,7 @@ void drawPieces()
 
 	// Green pieces
 
-	//TODO:
+	// TODO:
 	DrawCircle(allHouses[1].tokens[0].xCoordinates, allHouses[1].tokens[0].yCoordinates, outline, RAYWHITE); // Background (White)
 	DrawCircle(allHouses[1].tokens[0].xCoordinates, allHouses[1].tokens[0].yCoordinates, inner, GREEN);		 // Actual Color
 	DrawText("1", allHouses[1].tokens[0].xCoordinates - 3, allHouses[1].tokens[0].yCoordinates - 8, 20, BLACK);
@@ -799,16 +795,19 @@ void drawPieces()
 	}
 }
 
-void drawDice() {
+void drawDice()
+{
 
-	if (currentTurnIndex != -1) {
+	if (currentTurnIndex != -1)
+	{
 
 		DrawText("Current", 800, 40, 30, BLACK);
 		DrawText("Turn:", 820, 80, 30, BLACK);
 		string turn = currentTurn[currentTurnIndex];
 		DrawText(turn.c_str(), 820, 120, 30, BLACK);
 
-		for (int i=0, j=160; i<4; i++, j+=40) {
+		for (int i = 0, j = 160; i < 4; i++, j += 40)
+		{
 			string n = names[i] + ": " + to_string(allHouses[i].hitrate);
 
 			DrawText(n.c_str(), 800, j, 30, BLACK);
@@ -836,54 +835,69 @@ void drawDice() {
 
 void rollDice()
 {
+	// Check if it is a new turn
 	if (newTurn)
 	{
+		// Generate a random number between 1 and 6 and assign it to the variable 'dice'
 		dice = GetRandomValue(1, 6);
+
+		// Set the 'newTurn' flag to false
 		newTurn = false;
+
+		// If 'dice' is equal to 6, generate a second random number between 1 and 6 and assign it to the variable 'dice2'
 		if (dice == 6)
 		{
 			dice2 = GetRandomValue(1, 6);
-		}
 
-		if (dice2 == 6)
-		{
-			//TODO:
-			dice3 = GetRandomValue(1, 6);
+			// If 'dice2' is equal to 6, generate a third random number between 1 and 6 and assign it to the variable 'dice3'
+			if (dice2 == 6)
+			{
+				dice3 = GetRandomValue(1, 6);
+			}
 		}
 	}
 }
 
 void killToken(string color, int key)
 {
-	for (int i=0; i<4; i++) {
+	for (int i = 0; i < 4; i++)
+	{
 
-		if (color == allHouses[i].color) {
+		if (color == allHouses[i].color)
+		{
 
-			for (int j=0; j<4; j++) {
+			for (int j = 0; j < 4; j++)
+			{
 
-				if (j == i) {
+				if (j == i)
+				{
 					continue;
 				}
-				//this needs to be changed sus 
-				for (int k=0; k<totalTokens; k++) {
+				// this needs to be changed sus
+				for (int k = 0; k < totalTokens; k++)
+				{
 
-					if (allHouses[i].tokens[k].insideSafeHouse == true) {
+					if (allHouses[i].tokens[k].insideSafeHouse == true)
+					{
 
 						continue;
 					}
-					if (allHouses[j].tokens[k].insideSafeHouse == true) {
+					if (allHouses[j].tokens[k].insideSafeHouse == true)
+					{
 
-						continue;	// If killing gotti inside its own safe house, it can't kill 
-									// (Cuz Positions updating regardless)
+						continue; // If killing gotti inside its own safe house, it can't kill
+								  // (Cuz Positions updating regardless)
 					}
-					if (allHouses[i].tokens[key].position % 52 == 0 || allHouses[i].tokens[key].position % 52 == 8 || 
-						allHouses[i].tokens[key].position % 52 == 13 || allHouses[i].tokens[key].position % 52 == 21 || 
-						allHouses[i].tokens[key].position % 52 == 26 || allHouses[i].tokens[key].position % 52 == 34 || 
-						allHouses[i].tokens[key].position% 52 == 39 || allHouses[i].tokens[key].position % 52 == 47) {
+					if (allHouses[i].tokens[key].position % 52 == 0 || allHouses[i].tokens[key].position % 52 == 8 ||
+						allHouses[i].tokens[key].position % 52 == 13 || allHouses[i].tokens[key].position % 52 == 21 ||
+						allHouses[i].tokens[key].position % 52 == 26 || allHouses[i].tokens[key].position % 52 == 34 ||
+						allHouses[i].tokens[key].position % 52 == 39 || allHouses[i].tokens[key].position % 52 == 47)
+					{
 
-							continue;
+						continue;
 					}
-					if (allHouses[i].tokens[key].position % 52 == allHouses[j].tokens[k].position % 52) {
+					if (allHouses[i].tokens[key].position % 52 == allHouses[j].tokens[k].position % 52)
+					{
 
 						allHouses[j].tokens[k].position = -1;
 						allHouses[j].tokens[k].iterator = 0;
@@ -894,7 +908,7 @@ void killToken(string color, int key)
 						allHouses[i].hitrate++;
 						cout << allHouses[i].color << ":" << allHouses[i].hitrate << endl;
 						break;
-					}				
+					}
 				}
 			}
 			break;
@@ -905,7 +919,7 @@ void killToken(string color, int key)
 sem_t tokensem;
 sem_t dicesem;
 
-void* player(void *args)
+void *player(void *args)
 {
 	int p_no = *(int *)args;
 	while (true)
@@ -918,31 +932,32 @@ void* player(void *args)
 		sem_wait(&tokensem);
 		currentTurnIndex = p_no;
 		int count = 0;
-		if(dice==6 && dice2==6 && dice3==6) {
-
+		if (dice == 6 && dice2 == 6 && dice3 == 6)
+		{
 			count = 3;
 		}
 		while (count != 3)
 		{
-			//dont change it ffs
-			if (keypressed) {
-
+			// dont change it ffs
+			if (keypressed)
+			{
 				usleep(1000);
 			}
-			if(keypressed >= 49 && keypressed < 49+totalTokens) {
+			if (keypressed >= 49 && keypressed < 49 + totalTokens)
+			{
 
-				allHouses[p_no].moveToken(keypressed-49);
+				allHouses[p_no].moveToken(keypressed - 49);
 				keypressed = 0;
-				if(dice2) {
-
+				if (dice2)
+				{
 					count++;
 				}
-				else if(dice3) {
-
+				else if (dice3)
+				{
 					count++;
 				}
-				else {
-
+				else
+				{
 					count = 3;
 				}
 			}
@@ -954,7 +969,7 @@ void* player(void *args)
 	pthread_exit(NULL);
 }
 
-void* masterthread(void *args)
+void *masterthread(void *args)
 {
 	pthread_t players[4];
 	for (int i = 0; i < 4; i++)
@@ -969,18 +984,21 @@ void* masterthread(void *args)
 	}
 	int temp_position = 1;
 	int counter = 0;
-	while(true) {
+	while (true)
+	{
 
-		for(int i=0; i<4; i++) {
+		for (int i = 0; i < 4; i++)
+		{
 
-			if(allHouses[i].tokensRemaining==0) {
+			if (allHouses[i].tokensRemaining == 0)
+			{
 
 				allHouses[i].position = temp_position;
 				temp_position++;
 				player_done[i] = true;
 				allHouses[i].tokensRemaining = 4;
 				cout << endl;
-				cout << names[i] << endl; 
+				cout << names[i] << endl;
 				cout << "pid:" << (uint64_t)players[i] << endl;
 				cout << "Color:" << allHouses[i].getColor() << endl;
 				cout << "Cancelled Thread" << endl;
@@ -990,26 +1008,31 @@ void* masterthread(void *args)
 				rollDice();
 			}
 		}
-		//counting the number of players done with the game
-		for(int i=0; i<4; i++) {
+		// counting the number of players done with the game
+		for (int i = 0; i < 4; i++)
+		{
 
-			if(player_done[i]) {
+			if (player_done[i])
+			{
 
 				counter++;
 			}
 		}
-		//checking if any 3 players are done with the game
-		if(counter == 3) {
+		// checking if any 3 players are done with the game
+		if (counter == 3)
+		{
 
 			cout << "Exiting Master Thread" << endl;
-			for(int i=0; i<4; i++) {
+			for (int i = 0; i < 4; i++)
+			{
 
 				cout << "Position of " << names[i] << " " << allHouses[i].position << endl;
 			}
 			exit(0);
 			pthread_exit(NULL);
 		}
-		else {
+		else
+		{
 
 			counter = 0;
 		}
@@ -1040,7 +1063,8 @@ int main()
 	allHouses[3].setColor("Blue");
 
 	const int windowWidth = 1000;
-	const int windowHeight = 800;
+	const int windowHeight = 1000;
+
 	InitWindow(windowWidth, windowHeight, "OS Project");
 	SetTargetFPS(60);
 	sem_init(&dicesem, 0, 1);
@@ -1052,13 +1076,12 @@ int main()
 	while (!WindowShouldClose())
 	{
 		BeginDrawing();
-
 		ClearBackground(RAYWHITE);
 		drawBoard();
 		drawPieces();
 		drawDice();
 		keypressed = GetCharPressed();
-		
+
 		EndDrawing();
 	}
 }
