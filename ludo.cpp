@@ -811,7 +811,27 @@ void drawDice()
 		DrawText("Current", 800, 40, 30, BLACK);    // Current Turn Text, X, Y, Font Size, Color
 		DrawText("Turn:", 820, 80, 30, BLACK);
 		string turn = currentTurn[currentTurnIndex];
-		DrawText(turn.c_str(), 820, 120, 30, BLACK);
+
+		if (turn == "Green")
+		{
+			DrawText(turn.c_str(), 820, 120, 30, GREEN);
+		}
+
+		else if (turn == "Red")
+		{
+			DrawText(turn.c_str(), 820, 120, 30, RED);
+		}
+
+		else if (turn == "Blue")
+		{
+			DrawText(turn.c_str(), 820, 120, 30, BLUE);
+		}
+
+		else if (turn == "Yellow")
+		{
+			DrawText(turn.c_str(), 820, 120, 30, YELLOW);
+		}
+
 
 		for (int i = 0, j = 160; i < 4; i++, j += 40)
 		{
