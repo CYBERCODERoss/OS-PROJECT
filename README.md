@@ -21,5 +21,5 @@ make PLATFORM=PLATFORM_DESKTOP # To make the static version.
 
 sudo make install # Static version.
 
-g++ main.cpp -o main -lraylib && ./main
+g++ ludo.cpp -o ludo -lraylib && ./ludo
 ```
