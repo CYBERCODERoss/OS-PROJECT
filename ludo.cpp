@@ -25,7 +25,7 @@ int dice;
 int dice2 = 0;
 int dice3 = 0;
 
-void killToken(string, int);
+void killGoti(string, int);
 
 struct House
 {
@@ -228,7 +228,7 @@ struct House
 		return color;
 	}
 
-	void moveToken(int key)
+	void moveGoti(int key)
 	{
 
 		if (dice == 6 && dice2 == 6 && dice3 == 6) // three times the player got 6
@@ -238,8 +238,8 @@ struct House
 			dice2 = 0;
 			dice3 = 0;
 			newTurn = true;
-			return;
-		}
+			return; // not your baari now
+		} 
 		if (dice)
 		{
 			if (tokens[key].free == false && dice == 6 && tokens[key].ended == false)
@@ -290,7 +290,7 @@ struct House
 					tokens[key].iterator = tokens[key].iterator % 52;
 				}
 
-				killToken(color, key);
+				killGoti(color, key);
 
 				if (tokens[key].iterator >= 51 && this->hitrate > 0)
 				{
@@ -376,7 +376,7 @@ struct House
 					tokens[key].iterator = tokens[key].iterator % 52;
 				}
 
-				killToken(color, key);
+				killGoti(color, key);
 
 				if (tokens[key].iterator >= 51 && this->hitrate > 0)
 				{
@@ -435,7 +435,7 @@ struct House
 					tokens[key].iterator = tokens[key].iterator % 52;
 				}
 
-				killToken(color, key);
+				killGoti(color, key);
 
 				if (tokens[key].iterator >= 51 && this->hitrate > 0)
 				{
@@ -600,7 +600,6 @@ void absolutePosition_init()
 
 void drawBoard()
 {
-
 	// Houses
 	DrawRectangle(25, 25, 300, 300, GREEN);
 	DrawRectangle(475, 25, 300, 300, RED);
@@ -859,7 +858,7 @@ void rollDice()
 	}
 }
 
-void killToken(string color, int key)
+void killGoti(string color, int key)
 {
 	for (int i = 0; i < 4; i++)
 	{
@@ -939,7 +938,6 @@ void *player(void *args)
 		}
 		while (count != 3)
 		{
-			// dont change it ffs
 			if (keypressed)
 			{
 				usleep(1000);
@@ -947,7 +945,7 @@ void *player(void *args)
 			if (keypressed >= 49 && keypressed < 49 + totalTokens)
 			{
 
-				allHouses[p_no].moveToken(keypressed - 49);
+				allHouses[p_no].moveGoti(keypressed - 49);
 				keypressed = 0;
 				if (dice2)
 				{
@@ -1012,7 +1010,6 @@ void *masterthread(void *args)
 		// counting the number of players done with the game
 		for (int i = 0; i < 4; i++)
 		{
-
 			if (player_done[i])
 			{
 
